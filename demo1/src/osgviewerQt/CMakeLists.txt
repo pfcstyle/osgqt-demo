@@ -9,6 +9,14 @@ SET(TARGET_LIBRARIES_VARS
     OPENTHREADS_LIBRARY
 )
 
+macro( config_project PROJECTNAME LIBNAME)
+    include_directories(${${LIBNAME}_INCLUDE_DIR})
+    target_link_libraries(${PROJECTNAME} ${${LIBNAME}_LIBRARY})
+endmacro()
+
+# add_executable()
+# config_project()
+
 
 SET (EXAMPLE_NAME osgviewerQt )
 
