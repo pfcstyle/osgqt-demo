@@ -116,6 +116,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeModules;${CMAKE_MODULE_PAT
 # may set these values without needing to manipulate the environment.
 SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} CACHE STRING "You may add additional search paths here. Use ; to separate multiple paths.")
 SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} CACHE STRING "You may add additional search paths here. Use ; to separate multiple paths.")
+
 # We are proposing that a new variable called CMAKE_PREFIX_PATH be introduced
 # to CMake to compliment CMAKE_INCLUDE_PATH and CMAKE_LIBRARY_PATH.
 # A formal feature request has been submited to CMake, Bug #4947.
@@ -131,6 +132,7 @@ SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} CACHE STRING "You may add additiona
 # will have no impact.
 # This is unofficial so this may be removed or changed at anytime.
 SET(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} CACHE STRING "(EXPERIMENTAL) You may add additional search paths here. Use ; to separate multiple paths.")
+SET(ACTUAL_3DPARTY_DIR ${PROJECT_SOURCE_DIR}/3rdparty CACHE STRING "(EXPERIMENTAL) You may set your 3rdparty path")
 
 
 # This is for an advanced option to give aggressive warnings
@@ -208,6 +210,9 @@ find_package(OpenSceneGraph 3.6.3 REQUIRED osgDB osgGA osgUtil osgText osgViewer
 # QUIET option disables messages if the package cannot be found.
 
 find_package(Qt5 COMPONENTS Widgets OpenGL REQUIRED)
+
+# Find OsgQt
+find_package(OsgQt5)
 
 # Okay, here's the problem: On some platforms, linking against OpenThreads
 # is not enough and explicit linking to the underlying thread library
@@ -308,6 +313,7 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/src
     ${OPENGL_INCLUDE_DIR}
+    ${OSGQT5_INCLUDE_DIR}
 )
 
 # There are some default configurations
