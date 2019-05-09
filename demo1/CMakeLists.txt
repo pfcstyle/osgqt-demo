@@ -163,7 +163,8 @@ ELSEIF(MSVC)
         #C4100 'identifier' : unreferenced formal parameter
         #C4127 Error Message conditional expression is constant
         #C4706 assignment within conditional expression
-        SET(OSGEDITOR_AGGRESSIVE_WARNING_FLAGS /W4 /wd4706 /wd4127 /wd4100)
+        #C4430 C++ does not support default-int" .
+        SET(OSGEDITOR_AGGRESSIVE_WARNING_FLAGS /W4 /wd4706 /wd4127 /wd4100 /wd4430)
 ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         SET(OSGEDITOR_AGGRESSIVE_WARNING_FLAGS  -Wall -Wparentheses -Wno-long-long -Wno-import -pedantic -Wreturn-type -Wmissing-braces -Wunknown-pragmas -Wunused -Wno-overloaded-virtual)
 
@@ -203,16 +204,13 @@ ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 ENDIF()
 
 # Search 3rd package by CMake's moduls file, it named findopenscenegraph.cmake, you can set env OSGDIR
-find_package(OpenSceneGraph 3.6.3 REQUIRED osgDB osgGA osgUtil osgText osgViewer osgWidget)
+find_package(OpenSceneGraph 3.6.3 REQUIRED osgDB osgGA osgUtil osgText osgViewer osgWidget osgQt)
 
 # To select a specific version of QT define DESIRED_QT_VERSION
 # via cmake -DDESIRED_QT_VERSION=5
 # QUIET option disables messages if the package cannot be found.
 
 find_package(Qt5 COMPONENTS Widgets OpenGL REQUIRED)
-
-# Find OsgQt
-find_package(OsgQt5)
 
 # Okay, here's the problem: On some platforms, linking against OpenThreads
 # is not enough and explicit linking to the underlying thread library
