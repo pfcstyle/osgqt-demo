@@ -15,9 +15,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
-project(OSGEditor LANGUAGE CXX)
-
-add_subdirectory(src)
+project(OSGEditor LANGUAGES CXX)
 
 # Get OSX version in MAJOR.MINOR format
 # sw_vers [-productName|-productVersion|-buildVersion] fetch system version
@@ -81,7 +79,14 @@ IF(APPLE)
     # and 32/64-bit Intel/PPC on >= 10.5. Anything <= 10.3 doesn't support.
     # These are set the first time CMake is run, and can be changed by
     # the user at any time.
-    IF(OSGEDITOR_OSX_VERSION VERSION_GREATER 10.8)
+    IF(OSG_OSX_VERSION VERSION_GREATER_EQUAL 10.14)
+        # x86_64 only
+        SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX")
+        SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Target OSX version")
+        # libstdc++ is no longer supported
+        SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LANGUAGE_STANDARD "c++11")
+        SET(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_LIBRARY "libc++")
+    ELSEIF(OSG_OSX_VERSION VERSION_GREATER 10.8)
       # 64 Bit Works, i386,ppc is not supported any more
       SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX")
       SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.10" CACHE STRING "Target OSX version")
@@ -111,6 +116,9 @@ ENDIF()
 # We have some custom .cmake scripts not in the official distribution.
 # Maybe this can be used override existing behavior if needed?
 SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+
+# Include macro utilities here
+INCLUDE(OsgMacroUtils)
 
 # Expose CMAKE_INCLUDE_PATH and CMAKE_LIBARY_PATH to the GUI so users
 # may set these values without needing to manipulate the environment.
@@ -165,7 +173,7 @@ ELSEIF(MSVC)
         #C4706 assignment within conditional expression
         #C4430 C++ does not support default-int" .
         SET(OSGEDITOR_AGGRESSIVE_WARNING_FLAGS /W4 /wd4706 /wd4127 /wd4100 /wd4430)
-ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+ELSEIF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
         SET(OSGEDITOR_AGGRESSIVE_WARNING_FLAGS  -Wall -Wparentheses -Wno-long-long -Wno-import -pedantic -Wreturn-type -Wmissing-braces -Wunknown-pragmas -Wunused -Wno-overloaded-virtual)
 
         # CMake lacks an elseif, so other non-gcc, non-VS compilers need
@@ -311,7 +319,6 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_LIST_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/src
     ${OPENGL_INCLUDE_DIR}
-    ${OSGQT5_INCLUDE_DIR}
 )
 
 # There are some default configurations
@@ -657,6 +664,8 @@ IF(APPLE)
     ENDIF()
 
 ENDIF()
+
+add_subdirectory(src)
 
 
 # For Doxygen
